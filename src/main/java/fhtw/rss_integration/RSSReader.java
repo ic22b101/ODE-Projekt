@@ -6,6 +6,7 @@ import com.rometools.fetcher.impl.HttpClientFeedFetcher;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
+import javafx.application.Platform;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -19,7 +20,18 @@ import java.net.URL;
 import java.util.List;
 
 public class RSSReader {
+
+    private List<SyndEntry> entries;
+
     private static final Logger log = LoggerFactory.getLogger(RSSReader.class);
+    private RSSFeedDisplayController feedDisplayController;
+    // Hinzugefügt: Methode, um die Liste der Einträge zurückzugeben
+
+    // Hinzugefügt: Speichert die Liste der Einträge
+
+    public void setFeedDisplayController(RSSFeedDisplayController feedDisplayController) {
+        this.feedDisplayController = feedDisplayController;
+    }
 
     public void setUpdateFrequency(String updateFrequency) {
         log.info("Aktualisierungshäufigkeit gesetzt: {}", updateFrequency);
@@ -33,10 +45,10 @@ public class RSSReader {
             HttpClientFeedFetcher feedFetcher = new HttpClientFeedFetcher();
             SyndFeed feed = feedFetcher.retrieveFeed(url);
 
-            List<SyndEntry> entries = feed.getEntries();
+            entries = feed.getEntries();  // Hinzugefügt: Setze die Liste der Einträge
 
-            // RSS-Feeds drucken
-            printRSSFeeds(entries);
+            // RSS-Feeds anzeigen in der GUI
+            displayRSSFeedsInGUI(entries);
 
             // CSV-Output generieren
             generateCSVOutput(entries, "output.csv");
@@ -50,13 +62,16 @@ public class RSSReader {
         }
     }
 
-    private void printRSSFeeds(List<SyndEntry> entries) {
-        for (SyndEntry entry : entries) {
-            System.out.println("Title: " + entry.getTitle());
-            System.out.println("Link: " + entry.getLink());
-            System.out.println("Published Date: " + entry.getPublishedDate());
-            System.out.println("Description: " + cleanHtmlTags(entry.getDescription().getValue()));
-            System.out.println("------------------------------");
+    private void displayRSSFeedsInGUI(List<SyndEntry> entries) {
+        // Anzeige der RSS-Feeds in der GUI
+        if (feedDisplayController != null) {
+            System.out.println("Displaying RSS Feeds in GUI...");
+            Platform.runLater(() -> {
+                System.out.println("Platform.runLater: Displaying RSS Feeds...");
+                feedDisplayController.displayRSSFeeds(entries);
+            });
+        } else {
+            System.out.println("feedDisplayController is null");
         }
     }
 
@@ -92,5 +107,8 @@ public class RSSReader {
         return Jsoup.clean(document.body().html(), Whitelist.none());
     }
 
-
+    // Hinzugefügt: Methode, um die Liste der Einträge zurückzugeben
+    public List<SyndEntry> getEntries() {
+        return entries;
+    }
 }

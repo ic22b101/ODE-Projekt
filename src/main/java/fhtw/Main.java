@@ -1,20 +1,22 @@
 package fhtw;
 
+import fhtw.rss_integration.RSSFeedDisplayController;
 import fhtw.update_frequency.FrequencySelectorController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import fhtw.rss_integration.RSSReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.io.IOException;
 
 public class Main extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -22,23 +24,49 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FrequencySelector.fxml"));
-            Scene scene = new Scene(loader.load(), 300, 100);
+            // Laden des FrequencySelector-Fensters
+            FXMLLoader frequencyLoader = new FXMLLoader(getClass().getResource("FrequencySelector.fxml"));
+            Scene frequencyScene = new Scene(frequencyLoader.load(), 400, 300);
 
-            // Initialisiere den RSSReader (falls benötigt)
-            RSSReader rssReader = new RSSReader(); // Hier entsprechend deiner Implementierung
-            FrequencySelectorController controller = loader.getController();
-            controller.init(rssReader);
+            // Initialisierung des RSSReaders
+            RSSReader rssReader = new RSSReader();
+            FXMLLoader feedLoader = new FXMLLoader(getClass().getResource("RSSFeedDisplay.fxml"));
+            VBox feedDisplayRoot = feedLoader.load();
+            RSSFeedDisplayController feedDisplayController = feedLoader.getController();
+            rssReader.setFeedDisplayController(feedDisplayController);
 
-            // Setze die Szene für die Hauptbühne (primary stage)
-            primaryStage.setScene(scene);
+            // Laden des RSSFeedDisplay-Fensters
+            // Laden des RSSFeedDisplay-Fensters
+            Scene feedDisplayScene = new Scene(feedDisplayRoot, 600, 400);
 
-            // Zeige die Hauptbühne
-            primaryStage.setTitle("Main Window");
+            // Initialisierung des FrequencySelector-Controllers
+            FrequencySelectorController frequencyController = frequencyLoader.getController();
+            frequencyController.init(rssReader, feedDisplayController);
+
+
+// Hier den RSS-Feed abrufen und die Methode displayRSSFeeds aufrufen
+            rssReader.readAndPrintRSSFeed();
+
+// Setzen der Szene für das FrequencySelector-Fenster
+            primaryStage.setScene(frequencyScene);
+
+// Zeige das FrequencySelector-Fenster
+            primaryStage.setTitle("Frequency Selector");
             primaryStage.show();
 
+// Setzen der Szene für das RSSFeedDisplay-Fenster nach dem Aufrufen von readAndPrintRSSFeed
+            primaryStage.setScene(feedDisplayScene);
+
+
+            // Fehlerbehandlung für FXML-Lade- oder Initialisierungsfehler
         } catch (IOException e) {
-            log.error("Error loading FXML file or initializing RSSReader", e);
+            log.error("Error loading FXML file or initializing controllers", e);
+            // Hier können entsprechende Fehlermeldungen oder Aktionen hinzugefügt werden
         }
     }
+
+
 }
+
+
+

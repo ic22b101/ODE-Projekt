@@ -11,6 +11,7 @@ module fhtw.odenew {
 
 
     opens fhtw to javafx.fxml;
+    opens fhtw.rss_integration to javafx.fxml;
     exports fhtw;
     exports fhtw.update_frequency;
     opens fhtw.update_frequency to javafx.fxml;
