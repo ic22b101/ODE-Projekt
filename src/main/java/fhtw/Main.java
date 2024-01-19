@@ -36,27 +36,18 @@ public class Main extends Application {
             rssReader.setFeedDisplayController(feedDisplayController);
 
             // Laden des RSSFeedDisplay-Fensters
-            // Laden des RSSFeedDisplay-Fensters
             Scene feedDisplayScene = new Scene(feedDisplayRoot, 600, 400);
 
             // Initialisierung des FrequencySelector-Controllers
             FrequencySelectorController frequencyController = frequencyLoader.getController();
             frequencyController.init(rssReader, feedDisplayController);
 
-
-// Hier den RSS-Feed abrufen und die Methode displayRSSFeeds aufrufen
-            rssReader.readAndPrintRSSFeed();
-
-// Setzen der Szene für das FrequencySelector-Fenster
+            // Setzen der Szene für das FrequencySelector-Fenster
             primaryStage.setScene(frequencyScene);
 
-// Zeige das FrequencySelector-Fenster
+            // Zeige das FrequencySelector-Fenster
             primaryStage.setTitle("Frequency Selector");
             primaryStage.show();
-
-// Setzen der Szene für das RSSFeedDisplay-Fenster nach dem Aufrufen von readAndPrintRSSFeed
-            primaryStage.setScene(feedDisplayScene);
-
 
             // Fehlerbehandlung für FXML-Lade- oder Initialisierungsfehler
         } catch (IOException e) {

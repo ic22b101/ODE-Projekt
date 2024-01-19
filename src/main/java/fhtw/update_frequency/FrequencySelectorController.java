@@ -5,10 +5,11 @@ import fhtw.rss_integration.RSSFeedDisplayController;
 import fhtw.rss_integration.RSSReader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
-
+import javafx.scene.control.Button;
 
 import java.util.List;
 
@@ -19,6 +20,14 @@ public class FrequencySelectorController {
 
     private RSSReader rssReader;
     private RSSFeedDisplayController feedDisplayController;
+    private Stage stage;  // Hinzugefügt: Stage-Objekt
+
+
+
+    // Hinzugefügt: Methode zum Setzen des Stage-Objekts
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     public void init(RSSReader rssReader, RSSFeedDisplayController feedDisplayController) {
         this.rssReader = rssReader;
@@ -34,7 +43,6 @@ public class FrequencySelectorController {
         frequencyComboBox.getSelectionModel().selectFirst();
     }
 
-
     @FXML
     private void applyFrequency() {
         if (rssReader != null && feedDisplayController != null) {
@@ -47,7 +55,7 @@ public class FrequencySelectorController {
 
             // Schließe das FrequencySelector-Fenster
             Stage stage = (Stage) frequencyComboBox.getScene().getWindow();
-            stage.close();
+            // stage.close(); // Entfernen oder auskommentieren Sie diese Zeile
 
             // Rufen Sie die Methode zum Aktualisieren der Feed-Anzeige auf
             feedDisplayController.updateRSSFeed(entries);
@@ -56,4 +64,7 @@ public class FrequencySelectorController {
             System.out.println("RSSReader oder FeedDisplayController ist null.");
         }
     }
+
+
 }
+
